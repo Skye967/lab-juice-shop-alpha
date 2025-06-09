@@ -92,7 +92,16 @@ const checkIfPortIsAvailable = async (port: number) => {
 const checkIfRequiredFileExists = async (pathRelativeToProjectRoot: string) => {
   const fileName = pathRelativeToProjectRoot.substr(pathRelativeToProjectRoot.lastIndexOf('/') + 1)
 
-  return access(path.resolve(pathRelativeToProjectRoot)).then(() => {
+  const resolvedPath = path.resolve(pathRelativeToProjectRoot);
+  const normalizedPath = path.normalize(resolvedPath);
+  const isPathValid = normalizedPath.startsWith(path.resolve('.'));
+
+  if (!isPathValid) {
+    logger.warn(`Access to the path ${colors.bold(normalizedPath)} is denied (${colors.red('NOT OK')})`);
+    return false;
+  }
+
+  return access(normalizedPath).then(() => {
     logger.info(`Required file ${colors.bold(fileName)} is present (${colors.green('OK')})`)
     return true
   }).catch(() => {
