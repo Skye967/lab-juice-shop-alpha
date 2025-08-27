@@ -25,8 +25,8 @@ import logger from '../lib/logger'
 import config from 'config'
 import path from 'path'
 import * as utils from '../lib/utils'
-const datacache = require('./datacache')
 const mongodb = require('./mongodb')
+const datacache = require('./datacache')
 const security = require('../lib/insecurity')
 
 const fs = require('fs')
