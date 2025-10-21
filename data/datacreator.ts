@@ -38,7 +38,13 @@ const entities = new Entities()
 const readFile = util.promisify(fs.readFile)
 
 function loadStaticData (file: string) {
-  const filePath = path.resolve('./data/static/' + file + '.yml')
+  const baseDir = path.resolve('./data/static')
+  const filePath = path.resolve(baseDir, file + '.yml')
+  // Ensure the resolved path is inside baseDir
+  if (!filePath.startsWith(baseDir + path.sep) && filePath !== baseDir) {
+    logger.error('Attempt to access file outside static data directory: "' + filePath + '"')
+    return Promise.reject(new Error('Invalid file path'))
+  }
   return readFile(filePath, 'utf8')
     .then(safeLoad)
     .catch(() => logger.error('Could not open file: "' + filePath + '"'))
